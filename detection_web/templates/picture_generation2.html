@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<title>Picture Generation</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<link rel="stylesheet" href="assets/css/main.css" />
+	<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	<style>
+		.container {
+			display: flex;
+			justify-content: space-between;
+			gap: 20px;
+		}
+		.image-preview, .result-preview {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 20px;
+		}
+		.image-preview img, .result-preview img {
+			width: 200px;
+			height: auto;
+			border-radius: 8px;
+			border: 1px solid #ddd;
+		}
+		#generateButton, .download-button {
+			margin-top: 20px;
+			padding: 10px 20px;
+			font-size: 1rem;
+			color: white;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+		#generateButton {
+			background-color: #4CAF50;
+		}
+		#generateButton:hover {
+			background-color: #45a049;
+		}
+		.download-button {
+			background-color: #007BFF;
+			text-decoration: none;
+			text-align: center;
+			display: inline-block;
+			opacity: 0.5;
+			pointer-events: none; /* 초기에는 비활성화 */
+		}
+		.download-button.active {
+			opacity: 1;
+			pointer-events: auto; /* 활성화 상태 */
+		}
+		.download-button:hover {
+			background-color: #0056b3;
+		}
+		.result-placeholder {
+			width: 200px;
+			height: 200px;
+			background-color: #f0f0f0;
+			border: 1px solid #ddd;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 0.9rem;
+			color: #888;
+		}
+		#previewContainer {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+		}
+	</style>
+</head>
+<body class="is-preload">
+	<div id="wrapper">
+		<header id="header">
+			<div class="inner">
+				<a href="index.html" class="logo">
+					<span class="symbol"><img src="images/logo.svg" alt="" /></span><span class="title">FakeME</span>
+				</a>
+				<nav>
+					<ul>
+						<li><a href="#menu">Menu</a></li>
+					</ul>
+				</nav>
+			</div>
+		</header>
+
+		<nav id="menu">
+			<h2>Menu</h2>
+			<ul>
+				<li><a href="index.html">Home</a></li>
+				<li><a href="generic.html">Ipsum veroeros</a></li>
+				<li><a href="generic.html">Tempus etiam</a></li>
+				<li><a href="generic.html">Consequat dolor</a></li>
+				<li><a href="elements.html">Elements</a></li>
+			</ul>
+		</nav>
+
+		<div id="main">
+			<div class="inner">
+				<h1>Picture Generation2</h1>
+				<span class="image main"><img src="images/pic13.jpg" alt="" /></span>
+				<p>여러 얼굴 사진을 업로드하고 Deepfake 생성을 시작하세요.</p>
+
+				<div class="container">
+					<!-- 업로드 및 미리보기 영역 -->
+					<div class="image-preview">
+						<label for="imageInput1">얼굴 사진들 (Multiple Face Images)</label>
+						<input type="file" id="imageInput1" accept="image/*" multiple>
+						<div id="previewContainer"></div> <br><br>
+					
+
+						<label for="imageInput2">배경, 인물 사진 (Body Image)</label>
+						<input type="file" id="imageInput2" accept="image/*">
+						<img id="preview2" src="" alt="사진 2 미리보기" style="display: none;">
+						
+						<button id="generateButton" onclick="generateDeepfake()">Deepfake 생성</button>
+					</div>
+
+					<!-- Deepfake 결과 및 다운로드 영역 -->
+					<div class="result-preview">
+						<h3>Deepfake 결과</h3>
+						<div id="resultPlaceholder" class="result-placeholder">결과 이미지가 여기에 표시됩니다</div>
+						<img id="deepfakeResult" src="" alt="Deepfake 결과 미리보기" style="display: none;">
+						<!-- 항상 표시되는 다운로드 버튼 -->
+						<a id="downloadButton" class="download-button" href="#" download="deepfake_result.jpg">결과 다운로드</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<footer id="footer">
+			<div class="inner">
+				<section>
+					<h2>Get in touch</h2>
+					<form method="post" action="#">
+						<div class="fields">
+							<div class="field half">
+								<input type="text" name="name" id="name" placeholder="Name" />
+							</div>
+							<div class="field half">
+								<input type="email" name="email" id="email" placeholder="Email" />
+							</div>
+							<div class="field">
+								<textarea name="message" id="message" placeholder="Message"></textarea>
+							</div>
+						</div>
+						<ul class="actions">
+							<li><input type="submit" value="Send" class="primary" /></li>
+						</ul>
+					</form>
+				</section>
+				<section>
+					<h2>Follow</h2>
+					<ul class="icons">
+						<li><a href="#" class="icon brands style2 fa-twitter"><span class="label">Twitter</span></a></li>
+						<li><a href="#" class="icon brands style2 fa-facebook-f"><span class="label">Facebook</span></a></li>
+						<li><a href="#" class="icon brands style2 fa-instagram"><span class="label">Instagram</span></a></li>
+						<li><a href="#" class="icon brands style2 fa-dribbble"><span class="label">Dribbble</span></a></li>
+						<li><a href="#" class="icon brands style2 fa-github"><span class="label">GitHub</span></a></li>
+						<li><a href="#" class="icon brands style2 fa-500px"><span class="label">500px</span></a></li>
+						<li><a href="#" class="icon solid style2 fa-phone"><span class="label">Phone</span></a></li>
+						<li><a href="#" class="icon solid style2 fa-envelope"><span class="label">Email</span></a></li>
+					</ul>
+				</section>
+			</div>
+		</footer>
+	</div>
+
+	<!-- Scripts -->
+	<script>
+		// 여러 장의 얼굴 사진 미리보기
+		document.getElementById("imageInput1").addEventListener("change", function(event) {
+			const files = event.target.files;
+			const previewContainer = document.getElementById("previewContainer");
+			previewContainer.innerHTML = ""; // 기존 미리보기 초기화
+
+			for (const file of files) {
+				const reader = new FileReader();
+				const img = document.createElement("img");
+				img.style.display = "block";
+				img.style.margin = "5px"; // 이미지 간격 설정
+
+				reader.onload = function(e) {
+					img.src = e.target.result;
+					previewContainer.appendChild(img);
+				}
+				reader.readAsDataURL(file);
+			}
+		});
+
+		// 두 번째 이미지 미리보기
+		document.getElementById("imageInput2").addEventListener("change", function(event) {
+			const file = event.target.files[0];
+			const preview2 = document.getElementById("preview2");
+
+			if (file) {
+				const reader = new FileReader();
+				reader.onload = function(e) {
+					preview2.src = e.target.result;
+					preview2.style.display = "block";
+				}
+				reader.readAsDataURL(file);
+			}
+		});
+
+		// Deepfake 생성 함수
+		function generateDeepfake() {
+			// Deepfake 생성 후 이미지 표시 예제
+			const resultImage = document.getElementById("deepfakeResult");
+			const downloadButton = document.getElementById("downloadButton");
+			const resultPlaceholder = document.getElementById("resultPlaceholder");
+
+			// 임의의 결과 이미지 설정
+			resultImage.src = "images/deepfake_result.jpg"; // 실제 구현 시 생성된 결과로 설정 필요
+			resultImage.style.display = "block"; // 결과 이미지 보이도록 설정
+			resultPlaceholder.style.display = "none"; // 플레이스홀더 숨기기
+
+			// 다운로드 버튼 활성화
+			downloadButton.href = resultImage.src;
+			downloadButton.classList.add("active");
+
+			alert("Deepfake 생성이 완료되었습니다!");
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepfake Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+        input[type="file"] {
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        img {
+            max-width: 400px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Deepfake Generator</h1>
+    <form action="/" method="POST" enctype="multipart/form-data" class="container">
+        <label for="pic_a">Upload Source Image (Face):</label>
+        <input type="file" name="pic_a" id="pic_a" accept="image/*" required>
+        <label for="pic_b">Upload Target Image (Body):</label>
+        <input type="file" name="pic_b" id="pic_b" accept="image/*" required>
+        <button type="submit">Generate Deepfake</button>
+    </form>
+    
+    {% if result_image %}
+    <div class="container">
+        <h2>Generated Image:</h2>
+        <img src="{{ result_image }}" alt="Generated Deepfake Image">
+        <a href="{{ result_image }}" download="deepfake_result.jpg">Download Result</a>
+    </div>
+    {% endif %}
+</body>
+</html>
