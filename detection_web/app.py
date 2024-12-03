@@ -7,8 +7,16 @@ import torch.nn as nn
 from facenet_pytorch import MTCNN
 from PIL import Image
 import numpy as np
+import atexit
+import signal
 
 app = Flask(__name__)
+
+def shutdown_server():
+    pid = os.getpid()
+    os.kill(pid, signal.SIGINT)
+
+atexit.register(shutdown_server)
 
 # Configurations
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
