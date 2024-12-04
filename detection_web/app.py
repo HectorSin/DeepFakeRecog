@@ -102,7 +102,7 @@ def home():
     return render_template('index.html')
 
 @app.route('/home')
-def home():
+def home2():
     return render_template('index.html')
 
 @app.route('/elements')
