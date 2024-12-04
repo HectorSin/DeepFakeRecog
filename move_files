@@ -10,15 +10,18 @@ def copy_contents_keep_folder(source_folder, destination_folder):
         source_path = os.path.join(source_folder, item)
         destination_path = os.path.join(destination_folder, item)
 
-        # Check if it's a file or directory
+        # Check if it's a directory or a file
         if os.path.isdir(source_path):
-            # Copy directory recursively
-            shutil.copytree(source_path, destination_path, dirs_exist_ok=True)
+            # Copy directory, handle existing directory
+            try:
+                shutil.copytree(source_path, destination_path)
+            except FileExistsError:
+                print(f"Directory {destination_path} already exists. Skipping.")
         else:
             # Copy file
             shutil.copy2(source_path, destination_path)
 
 # Example usage
-source_folder = "detection_web"
-destination_folder = "SimSwap"
+source_folder = "/path/to/source/folder"
+destination_folder = "/path/to/destination/folder"
 copy_contents_keep_folder(source_folder, destination_folder)
