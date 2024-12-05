@@ -1,4 +1,3 @@
-from flask import Flask, request, render_template, send_from_directory, url_for
 import torch
 import cv2
 import numpy as np
@@ -10,6 +9,7 @@ from options.test_options import TestOptions
 import os
 import atexit
 import signal
+from flask import Flask, request, render_template, send_from_directory, url_for
 
 app = Flask(__name__)
 
@@ -48,27 +48,36 @@ opt.Arc_path = "arcface_model/arcface_checkpoint.tar"
 model = create_model(opt)
 model.eval()
 
+# GPU가 없는 환경에서도 작동 가능하도록 수정
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model = model.to(device)
+
 def process_image(pic_a_path, pic_b_path, output_path):
     with torch.no_grad():
+        # 이미지 A 처리
         img_a = Image.open(pic_a_path).convert("RGB")
         img_a = transformer_Arcface(img_a)
-        img_id = img_a.view(-1, img_a.shape[0], img_a.shape[1], img_a.shape[2]).cuda()
+        img_id = img_a.view(-1, img_a.shape[0], img_a.shape[1], img_a.shape[2]).to(device)
 
+        # 이미지 B 처리
         img_b = Image.open(pic_b_path).convert("RGB")
         img_b = transformer(img_b)
-        img_att = img_b.view(-1, img_b.shape[0], img_b.shape[1], img_b.shape[2]).cuda()
+        img_att = img_b.view(-1, img_b.shape[0], img_b.shape[1], img_b.shape[2]).to(device)
 
+        # Arcface 계산
         img_id_downsample = F.interpolate(img_id, size=(112, 112))
         latend_id = model.netArc(img_id_downsample)
         latend_id = latend_id.detach().to("cpu")
         latend_id = latend_id / np.linalg.norm(latend_id, axis=1, keepdims=True)
-        latend_id = latend_id.to("cuda")
+        latend_id = latend_id.to(device)
 
+        # 이미지 생성
         img_fake = model(img_id, img_att, latend_id, latend_id, True)
         img_fake = img_fake[0].detach().cpu().numpy()
         img_fake = np.transpose(img_fake, (1, 2, 0)) * 255
         img_fake = cv2.cvtColor(img_fake.astype("uint8"), cv2.COLOR_RGB2BGR)
 
+        # 결과 저장
         cv2.imwrite(output_path, img_fake)
 
 @app.route("/", methods=["GET", "POST"])
