@@ -103,6 +103,26 @@ def index():
 
     return render_template("picture_generation.html", result_image=result_image_path)
 
+@app.route("/home", methods=["GET", "POST"])
+def home():
+    result_image_path = None
+    if request.method == "POST":
+        pic_a = request.files.get("pic_a")
+        pic_b = request.files.get("pic_b")
+
+        if pic_a and pic_b:
+            pic_a_path = os.path.join(app.config["UPLOAD_FOLDER"], "pic_a.jpg")
+            pic_b_path = os.path.join(app.config["UPLOAD_FOLDER"], "pic_b.jpg")
+            output_path = os.path.join(app.config["OUTPUT_FOLDER"], "result.jpg")
+
+            pic_a.save(pic_a_path)
+            pic_b.save(pic_b_path)
+            process_image(pic_a_path, pic_b_path, output_path)
+
+            result_image_path = url_for("output_file", filename="result.jpg")
+
+    return render_template("picture_generation.html", result_image=result_image_path)
+
 @app.route("/output/<filename>")
 def output_file(filename):
     return send_from_directory(app.config["OUTPUT_FOLDER"], filename)
